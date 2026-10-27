@@ -1,7 +1,7 @@
 # polymarket-clob-infra
 
-[![CI](https://github.com/38st/polymarket-clob-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/38st/polymarket-clob-infra/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/38st/polymarket-clob-infra/blob/main/LICENSE)
+[![CI](https://github.com/armanruzgar/polymarket-clob-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/armanruzgar/polymarket-clob-infra/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/armanruzgar/polymarket-clob-infra/blob/main/LICENSE)
 
 Infrastructure from a Rust market maker I built for
 [Polymarket](https://polymarket.com)'s central limit order book. This crate
