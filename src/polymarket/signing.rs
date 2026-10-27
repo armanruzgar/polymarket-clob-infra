@@ -62,6 +62,7 @@ pub const BUY: u8 = 0;
 pub const SELL: u8 = 1;
 
 /// V2 signature and deterministic exchange order ID, available before publishing.
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SignedOrder {
     pub signature: String,
     pub salt: u64,

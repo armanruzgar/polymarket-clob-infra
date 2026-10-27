@@ -308,6 +308,7 @@ pub fn parse_server_seconds(body: &str) -> Result<i64> {
 }
 
 /// Measures the offset against `url` over HTTP, a request per round.
+#[cfg(feature = "net")]
 pub async fn check_venue_clock(url: &str, rounds: usize) -> Result<OffsetBounds> {
     let http = reqwest::Client::builder()
         .timeout(Duration::from_secs(5))

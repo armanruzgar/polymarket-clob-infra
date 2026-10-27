@@ -37,6 +37,7 @@ fn feed(c: &mut Criterion) {
         b.iter(|| {
             let book = MarketData::default();
             book.reset(&tokens);
+            book.connected();
             for m in &msgs {
                 black_box(book.ingest_any(m));
             }

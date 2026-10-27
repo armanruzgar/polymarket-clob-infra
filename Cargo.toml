@@ -3,16 +3,27 @@ name = "polymarket-clob-infra"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.90"
-description = "Market-data, signing and accounting infrastructure from a Rust market maker on a central-limit-order-book prediction market"
+description = "Order book, redundant-feed merge, lag detection, EIP-712 signing, REST and private-stream clients, and an exact-money execution ledger for Polymarket's CLOB"
 license = "MIT"
 repository = "https://github.com/38st/polymarket-clob-infra"
+readme = "README.md"
 keywords = ["polymarket", "order-book", "market-making", "low-latency", "eip712"]
-categories = ["finance"]
-publish = false
+categories = ["finance", "network-programming"]
+exclude = ["/.github", "/docs/data"]
+
+[features]
+default = ["net"]
+# The parts that talk to the venue: the websocket feed, the private fill
+# stream, the REST client, API-key derivation and the clock check. Without it
+# the crate is offline: the order book, the merge, lag arithmetic, signing and
+# the ledger, with no tokio or TLS dependency.
+net = ["dep:tokio", "dep:reqwest", "dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.12", features = ["json", "native-tls-alpn"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "net", "signal"], optional = true }
+reqwest = { version = "0.12", features = ["json", "native-tls-alpn"], optional = true }
+tokio-tungstenite = { version = "0.30", features = ["native-tls"], optional = true }
+futures-util = { version = "0.3", optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hmac = "0.12"
@@ -29,13 +40,33 @@ zeroize = "1.8"
 tracing = "0.1"
 
 [dev-dependencies]
-flate2 = "1"
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.30", features = ["native-tls"] }
 futures-util = "0.3"
+flate2 = "1"
+proptest = "1"
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
 
 [[bench]]
 name = "core"
 harness = false
 
+[[example]]
+name = "replay"
+
+[[example]]
+name = "live"
+required-features = ["net"]
+
+[[example]]
+name = "order_latency_probe"
+required-features = ["net"]
+
+[[test]]
+name = "merge_prop"
+
 [profile.release]
 overflow-checks = true
+
+[package.metadata.docs.rs]
+all-features = true

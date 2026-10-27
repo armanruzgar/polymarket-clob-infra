@@ -75,9 +75,15 @@ fn main() {
     // The reference: the venue's stream as one connection received it.
     let reference = MarketData::default();
     reference.reset(&tokens);
+    reference.connected();
+    let mut changes = 0u64;
     for (_, m) in &msgs {
-        reference.ingest_any(m);
+        changes += reference.ingest_any(m) as u64;
     }
+    assert!(
+        changes > 10_000,
+        "the reference book took only {changes} of the stream's messages"
+    );
 
     let conns = [
         Conn {
@@ -141,6 +147,7 @@ fn main() {
     let start = Instant::now();
     let merged = MarketData::default();
     merged.reset(&tokens);
+    merged.connected();
     let mut merge = MarketMerge::default();
     for c in &conns {
         merge.subscribe(c.id, start);
@@ -265,6 +272,8 @@ fn main() {
     );
 
     for t in &tokens {
+        let (_, _, book_time, depth, _) = reference.state_of(t).expect("the reference has a book");
+        assert!(book_time > 0 && depth.bid_levels().count() + depth.ask_levels().count() > 0);
         assert_eq!(merged.state_of(t), reference.state_of(t), "merged book differs on {t}");
     }
     println!("merged book == single-stream book on both tokens: OK");
